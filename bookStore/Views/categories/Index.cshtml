@@ -1,4 +1,5 @@
-﻿@model List<Category>
+﻿@using bookStore.ViewModels
+@model List<CategoryVM>
 @section Title {
 Category
 }
@@ -41,6 +42,9 @@ else
 
                         <td>
                             <div class="d-flex">
+                                <a asp-controller="Categories" asp-action="Detales" asp-route-id="@item.Id" class="mr-2 btn btn-primary">
+                                    Details
+                                </a>
                                 <a asp-controller="Categories" asp-action="Edit" asp-route-id="@item.Id" class="mr-2 btn btn-primary">
                                      edit
                                 </a>

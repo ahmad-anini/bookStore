@@ -9,25 +9,40 @@ namespace bookStore.Controllers
     {
         private readonly ApplicationDbContext context;
 
-        public AuthorsController(ApplicationDbContext context) { 
+        public AuthorsController(ApplicationDbContext context)
+        {
             this.context = context;
         }
 
         public IActionResult Index()
         {
             var authors = context.authors.ToList();
-            var authorsVM = new List<AuthorVM>();
-            foreach (var author in authors)
+            var authorsVM = authors.Select(author => new AuthorVM()
             {
-                var authorVM = new AuthorVM() { 
+                Id = author.Id,
+                Name = author.Name
+            }).ToList();
+            return View(authorsVM);
+        }
+
+        public IActionResult Detales(int id)
+        {
+            var author = context.authors.Find(id);
+            if (author is null)
+            {
+                return NotFound();
+            }
+            var viewModle = new AuthorVM()
+            {
                 Id = author.Id,
                 Name = author.Name,
-                CreatedOn = author.CreatedOn,
-                UpdatedOn = author.UpdatedOn,  
-                };
-                authorsVM.Add(authorVM);
-            }
-            return View(authorsVM);
+                CreatedOn = DateTime.Now,
+                UpdatedOn = DateTime.Now
+
+            };
+
+            return View(viewModle);
+
         }
 
         [HttpGet]
@@ -40,7 +55,7 @@ namespace bookStore.Controllers
             {
                 return View("Form", authorVM);
             }
-            var author = new Author { Id = authorVM.Id ,Name = authorVM.Name };
+            var author = new Author { Id = authorVM.Id, Name = authorVM.Name };
             context.authors.Add(author);
             context.SaveChanges();
             return RedirectToAction("Index");
@@ -48,8 +63,9 @@ namespace bookStore.Controllers
         }
 
         [HttpGet]
-        public IActionResult Edit(int id) {
-          var author =  context.authors.Find(id);
+        public IActionResult Edit(int id)
+        {
+            var author = context.authors.Find(id);
             if (author is null)
             {
                 return NotFound();
@@ -60,8 +76,8 @@ namespace bookStore.Controllers
                 Id = author.Id,
                 Name = author.Name,
             };
-        return View("Form", authorVM);
-        } 
+            return View("Form", authorVM);
+        }
 
         [HttpPost]
         public IActionResult Edit(AuthorFormVM authorVM)
@@ -76,7 +92,6 @@ namespace bookStore.Controllers
             context.SaveChanges();
             return RedirectToAction("Index");
         }
-
 
         public IActionResult Delete(int id)
         {

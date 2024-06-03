@@ -16,12 +16,38 @@ namespace bookStore.Controllers
         public IActionResult Index()
         {
             var categories = context.categories.ToList();
-            return View(categories);
+
+            var categoryVM = categories.Select(category => new CategoryVM
+            {
+                Id = category.Id,
+                Name = category.Name,
+            }).ToList();
+            return View(categoryVM);
+        }
+
+        public IActionResult Detales(int id)
+        {
+            var category = context.categories.Find(id);
+            if (category is null)
+            {
+                return NotFound();
+            }
+            var viewModle = new CategoryVM()
+            {
+                Id = category.Id,
+                Name = category.Name,
+                CreatedOn = category.CreatedOn,
+                UpdatedOn = category.UpdatedOn,
+
+            };
+
+            return View(viewModle);
+
         }
 
         [HttpGet]
         public IActionResult Create() => View();
- 
+
         [HttpPost]
         public IActionResult Create(CategoryVM categoryVM)
         {
@@ -36,7 +62,8 @@ namespace bookStore.Controllers
                 context.SaveChanges();
                 return RedirectToAction("Index");
             }
-            catch {
+            catch
+            {
                 ModelState.AddModelError("Name", "Category Name Already Exists");
                 return View(categoryVM);
             }
@@ -46,12 +73,12 @@ namespace bookStore.Controllers
         [HttpGet]
         public IActionResult Edit(int id) => View("Create");
 
-
         [HttpPost]
         public IActionResult Edit(CategoryVM categoryVM)
         {
             var category = context.categories.Find(categoryVM.Id);
-            if (category is null) {
+            if (category is null)
+            {
                 return NotFound();
             }
 
@@ -59,7 +86,6 @@ namespace bookStore.Controllers
             context.SaveChanges();
             return RedirectToAction("Index");
         }
-
 
         public IActionResult Delete(int id)
         {

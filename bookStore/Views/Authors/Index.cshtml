@@ -42,6 +42,9 @@ else
 
                         <td>
                             <div class="d-flex">
+                                <a asp-controller="Authors" asp-action="Detales" asp-route-id="@item.Id" class="mr-2 btn btn-primary">
+                                    Details
+                                </a>
                                 <a asp-controller="Authors" asp-action="Edit" asp-route-id="@item.Id" class="mr-2 btn btn-primary">
                                     edit
                                 </a>

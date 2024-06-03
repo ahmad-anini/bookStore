@@ -1,0 +1,32 @@
+﻿@using bookStore.ViewModels
+@model AuthorVM
+@section Title {
+Author
+}
+@section SubTitle {
+show
+}
+
+<div class="card-body">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th style="width: 10px">#</th>
+                <th>Name</th>
+                <th>Create Time</th>
+                <th>Update Time</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <tr>
+                <td>@Model.Id</td>
+                <td>@Model.Name</td>
+                <td>@Model.CreatedOn</td>
+                <td>@Model.UpdatedOn</td>
+
+            </tr>
+
+        </tbody>
+    </table>
+</div>

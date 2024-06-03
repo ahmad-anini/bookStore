@@ -12,8 +12,8 @@ using bookStore.Data;
 namespace bookStore.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240603154248_inial")]
-    partial class inial
+    [Migration("20240603194502_add-book-category-author")]
+    partial class addbookcategoryauthor
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -388,7 +388,7 @@ namespace bookStore.Data.Migrations
             modelBuilder.Entity("bookStore.Models.Book", b =>
                 {
                     b.HasOne("bookStore.Models.Author", "Author")
-                        .WithMany()
+                        .WithMany("Books")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -413,6 +413,11 @@ namespace bookStore.Data.Migrations
                     b.Navigation("Book");
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("bookStore.Models.Author", b =>
+                {
+                    b.Navigation("Books");
                 });
 
             modelBuilder.Entity("bookStore.Models.Book", b =>

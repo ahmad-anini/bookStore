@@ -11,7 +11,7 @@ namespace bookStore.ViewModels
         [MaxLength(30)]
         public string Name { get; set; } = default!;
 
-        public DateTime CreateTime { get; set; }
-        public DateTime UpdateTime { get; set; }
+        public DateTime CreatedOn { get; set; } = DateTime.Now;
+        public DateTime UpdatedOn { get; set; } = DateTime.Now;
     }
 }

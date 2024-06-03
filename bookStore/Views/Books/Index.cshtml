@@ -1,8 +1,71 @@
 ﻿@using bookStore.ViewModels
-@model List<BookFormVM>
+@model List<BookVM>
 @section Title {
 Books
 }
 @section SubTitle {
-show
+All Books
 }
+
+@section Buttons {
+    <a asp-controller="Books" asp-action="Create" class="btn btn-primary">
+        Create
+    </a>
+}
+
+@if (!Model.Any())
+{
+    <div class="card-body">
+        <div class="alert alert-warning alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <h5><i class="icon fas fa-exclamation-triangle"></i> Alert!</h5>
+            No Data Found .
+        </div>
+    </div>
+}
+else
+{
+    <div class="card-body">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th style="width: 10px">#</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Auther</th>
+                    <th>Publisher</th>
+                    <th>Book Image</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var book in @Model)
+                {
+                    <tr>
+                        <td>@book.Id</td>
+                        <td>@book.Title</td>
+                        <td>@book.Description</td>
+                        <td>@book.Auther</td>
+                        <td>@book.Publisher</td>
+
+                        <td> <img src="~/image/Books/@book.imageURL" width="50px" /></td>
+
+                        <td>
+                            <div class="d-flex">
+                                <a asp-controller="Books" asp-action="Edit" asp-route-id="@book.Id" class="mr-2 btn btn-primary">
+                                    edit
+                                </a>
+                                <a asp-controller="Books" asp-action="Delete" asp-route-id="@book.Id" class="btn btn-danger">Delete</a>
+                            </div>
+
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+
+
+
