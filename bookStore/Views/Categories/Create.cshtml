@@ -1,0 +1,22 @@
+﻿@using bookStore.ViewModels
+@model CategoryVM
+
+@section Title {
+Categories
+}
+@section SubTitle {
+Create
+}
+
+<form asp-controller="Categories" method="post">
+    <div class="card-body">
+        <div class="form-group">
+            <label asp-for="Name"></label>
+            <input type="text" class="form-control" asp-for="Name" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="card-footer">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>
