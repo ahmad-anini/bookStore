@@ -1,5 +1,6 @@
-﻿using bookStore.Data;
+﻿using AutoMapper;
 using bookStore.Models;
+using bookStore.Services;
 using bookStore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,39 +8,31 @@ namespace bookStore.Controllers
 {
     public class CategoriesController : Controller
     {
-        private readonly ApplicationDbContext context;
+        private readonly IUnitOfWork unitOfWork;
+        private readonly IMapper mapper;
 
-        public CategoriesController(ApplicationDbContext context)
+        public CategoriesController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            this.context = context;
+            this.unitOfWork = unitOfWork;
+            this.mapper = mapper;
         }
         public IActionResult Index()
         {
-            var categories = context.categories.ToList();
+            var categories = unitOfWork.CategoryRepository.GetAll();
 
-            var categoryVM = categories.Select(category => new CategoryVM
-            {
-                Id = category.Id,
-                Name = category.Name,
-            }).ToList();
+            var categoryVM = mapper.Map<List<CategoryVM>>(categories);
+
             return View(categoryVM);
         }
 
-        public IActionResult Detales(int id)
+        public IActionResult Details(int id)
         {
-            var category = context.categories.Find(id);
+            var category = unitOfWork.CategoryRepository.GetById(id);
             if (category is null)
             {
                 return NotFound();
             }
-            var viewModle = new CategoryVM()
-            {
-                Id = category.Id,
-                Name = category.Name,
-                CreatedOn = category.CreatedOn,
-                UpdatedOn = category.UpdatedOn,
-
-            };
+            var viewModle = mapper.Map<CategoryVM>(category);
 
             return View(viewModle);
 
@@ -55,11 +48,11 @@ namespace bookStore.Controllers
             {
                 return View("Create", categoryVM);
             }
-            var category = new Category { Name = categoryVM.Name };
+            var category = mapper.Map<Category>(categoryVM);
             try
             {
-                context.categories.Add(category);
-                context.SaveChanges();
+                unitOfWork.CategoryRepository.CreateCategory(category);
+                unitOfWork.Save();
                 return RedirectToAction("Index");
             }
             catch
@@ -76,27 +69,27 @@ namespace bookStore.Controllers
         [HttpPost]
         public IActionResult Edit(CategoryVM categoryVM)
         {
-            var category = context.categories.Find(categoryVM.Id);
+            var category = unitOfWork.CategoryRepository.GetById(categoryVM.Id);
             if (category is null)
             {
                 return NotFound();
             }
 
             category.Name = categoryVM.Name;
-            context.SaveChanges();
+            unitOfWork.Save();
             return RedirectToAction("Index");
         }
 
         public IActionResult Delete(int id)
         {
-            var category = context.categories.Find(id);
+            var category = unitOfWork.CategoryRepository.GetById(id);
             if (category is null)
             {
                 return NotFound();
             }
 
-            context.categories.Remove(category);
-            context.SaveChanges();
+            unitOfWork.CategoryRepository.DeleteCategory(category);
+            unitOfWork.Save();
             return RedirectToAction("Index");
         }
     }

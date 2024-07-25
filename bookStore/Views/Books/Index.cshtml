@@ -33,6 +33,7 @@ else
                     <th>Title</th>
                     <th>Description</th>
                     <th>Auther</th>
+                    <th>Categories</th>
                     <th>Publisher</th>
                     <th>Book Image</th>
                     <th>Action</th>
@@ -46,15 +47,14 @@ else
                         <td>@book.Title</td>
                         <td>@book.Description</td>
                         <td>@book.Auther</td>
+                        <td>@String.Join(", ", book.Categories)</td>
                         <td>@book.Publisher</td>
+
 
                         <td> <img src="~/image/Books/@book.imageURL" width="50px" /></td>
 
                         <td>
                             <div class="d-flex">
-                                <a asp-controller="Books" asp-action="Edit" asp-route-id="@book.Id" class="mr-2 btn btn-primary">
-                                    edit
-                                </a>
                                 <a asp-controller="Books" asp-action="Delete" asp-route-id="@book.Id" class="btn btn-danger">Delete</a>
                             </div>
 

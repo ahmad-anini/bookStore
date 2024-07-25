@@ -1,9 +1,10 @@
-﻿using bookStore.Data;
+﻿using AutoMapper;
+using bookStore.Data;
 using bookStore.Models;
+using bookStore.Services;
 using bookStore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 
 namespace bookStore.Controllers
 {
@@ -11,59 +12,39 @@ namespace bookStore.Controllers
     {
         private readonly ApplicationDbContext context;
         private readonly IWebHostEnvironment WepHost;
-        public BooksController(ApplicationDbContext context, IWebHostEnvironment WepHost)
+        private readonly IUnitOfWork unitOfWork;
+        private readonly IMapper mapper;
+        private readonly ILogger logger;
+
+        public BooksController(ApplicationDbContext context, IWebHostEnvironment WepHost, IUnitOfWork unitOfWork, IMapper mapper, ILogger logger)
         {
             this.context = context;
             this.WepHost = WepHost;
-
+            this.unitOfWork = unitOfWork;
+            this.mapper = mapper;
+            this.logger = logger;
         }
 
         public IActionResult Index()
         {
-            var books = context.books
-                .Include(book => book.Author)
-                .Include(book => book.Categories)
-                .ThenInclude(book => book.Category)
-                .ToList();
+            var books = unitOfWork.BookRepository.GetAll();
 
+            var bookvm = mapper.Map<List<BookVM>>(books);
 
-            var bookvm = books.Select(book => new BookVM
-            {
-                Id = book.Id,
-                Title = book.Title,
-                Description = book.Description,
-                Publisher = book.Publisher,
-                PublisherDate = book.PublisherDate,
-                Auther = book.Author.Name,
-                imageURL = book.ImageUrl,
-                Categories = book.Categories.Select(book => book.Category.Name).ToList()
-            }).ToList();
             return View(bookvm);
         }
 
         [HttpGet]
         public IActionResult Create()
         {
-            var authors = context.authors.OrderBy(x => x.Name).ToList();
-            var authorList = new List<SelectListItem>();
-            foreach (var author in authors)
-            {
-                authorList.Add(new SelectListItem
-                {
-                    Value = author.Id.ToString(),
-                    Text = author.Name,
-                });
-            }
-            var categories = context.categories.OrderBy(x => x.Name).ToList();
-            var categoryList = new List<SelectListItem>();
-            foreach (var category in categories)
-            {
-                categoryList.Add(new SelectListItem
-                {
-                    Value = category.Id.ToString(),
-                    Text = category.Name,
-                });
-            }
+            var authors = unitOfWork.AuthorRepository.GetAll();
+
+            var authorList = mapper.Map<List<SelectListItem>>(authors);
+
+            var categories = unitOfWork.CategoryRepository.GetAll();
+
+            var categoryList = mapper.Map<List<SelectListItem>>(categories);
+
             var viewModel = new BookFormVM
             {
                 Authors = authorList,
@@ -77,52 +58,52 @@ namespace bookStore.Controllers
         {
             if (!ModelState.IsValid) return View(viewModel);
 
-            String imageName = "";
-            if (viewModel.ImageUrl != null)
+            try
             {
+                var imageName = viewModel.ImageUrl != null ?
+                unitOfWork.BookRepository.AddBookImage(viewModel.ImageUrl) : string.Empty;
 
-                imageName = $"{DateTime.UtcNow:yyyyMMddHHmmssfff}_" + Path.GetFileName(viewModel.ImageUrl.FileName);
-                var path = Path.Combine($"{WepHost.WebRootPath}/image/Books", imageName);
-                var stream = System.IO.File.Create(path);
-                viewModel.ImageUrl.CopyTo(stream);
+                var book = mapper.Map<Book>(viewModel);
+                book.ImageUrl = imageName;
+
+                unitOfWork.BookRepository.CreateBook(book);
+                unitOfWork.Save();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message);
+                return StatusCode(500, "An error occurred while processing your request.");
             }
 
-            var book = new Book
-            {
-                Title = viewModel.Title,
-                AuthorId = viewModel.AuthorId,
-                Publisher = viewModel.Publisher,
-                PublisherDate = viewModel.PublisherDate,
-                Description = viewModel.Description,
-                ImageUrl = imageName,
-                Categories = viewModel.SelectedCategories.Select(Id => new BookCategory { CategoryId = Id }).ToList()
-            };
 
-            Console.WriteLine($"{book.Categories.First().Category}");
 
-            context.books.Add(book);
-            context.SaveChanges();
             return RedirectToAction("Index");
         }
 
         public ActionResult Delete(int id)
         {
-            var book = context.books.Find(id);
+            var book = unitOfWork.BookRepository.GetById(id);
             if (book == null)
             {
                 return NotFound();
             }
-            if (book.ImageUrl != null)
+
+            try
             {
-                var path = Path.Combine($"{WepHost.WebRootPath}/image/Books", book.ImageUrl);
-                if (System.IO.File.Exists(path))
+                if (book.ImageUrl != null)
                 {
-                    System.IO.File.Delete(path);
+                    unitOfWork.BookRepository.DeleteBookImage(book.ImageUrl);
                 }
+
+                unitOfWork.BookRepository.DeleteBook(book);
+                unitOfWork.Save();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message);
+                return StatusCode(500, "An error occurred while processing your request.");
             }
 
-            context.books.Remove(book);
-            context.SaveChanges();
 
             return RedirectToAction("Index");
         }
