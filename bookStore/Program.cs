@@ -1,4 +1,5 @@
 using bookStore.Data;
+using bookStore.Models;
 using bookStore.Repositories;
 using bookStore.Repositories.Implementaion;
 using bookStore.Services.UnitOfWorkService;
@@ -19,8 +20,8 @@ namespace bookStore
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultUI();
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

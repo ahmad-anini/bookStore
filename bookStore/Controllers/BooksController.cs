@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using bookStore.Data;
 using bookStore.Models;
 using bookStore.Services.UnitOfWorkService;
 using bookStore.ViewModels;
@@ -10,20 +9,14 @@ namespace bookStore.Controllers
 {
     public class BooksController : Controller
     {
-        private readonly ApplicationDbContext context;
-        private readonly IWebHostEnvironment WepHost;
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
         private readonly ILogger logger;
 
-        public BooksController(ApplicationDbContext context,
-                IWebHostEnvironment WepHost,
-                IUnitOfWork unitOfWork,
+        public BooksController(IUnitOfWork unitOfWork,
                 IMapper mapper,
                 ILogger<BooksController> logger)
         {
-            this.context = context;
-            this.WepHost = WepHost;
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
             this.logger = logger;
