@@ -1,27 +1,28 @@
 ﻿using bookStore.Data;
 using bookStore.Repositories;
-using bookStore.Repositories.Implementaion;
 
-namespace bookStore.Services
+namespace bookStore.Services.UnitOfWorkService
 {
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _dbContext;
-        private readonly IWebHostEnvironment _wepHost;
         private readonly ILogger _logger;
 
         public ICategoryRepository CategoryRepository { get; }
         public IAuthorRepository AuthorRepository { get; }
         public IBookRepository BookRepository { get; }
 
-        public UnitOfWork(ApplicationDbContext dbContext, IWebHostEnvironment WepHost, ILogger logger)
+        public UnitOfWork(ApplicationDbContext dbContext,
+                ILogger<UnitOfWork> logger,
+                ICategoryRepository categoryRepository,
+                IAuthorRepository authorRepository,
+                IBookRepository bookRepository)
         {
-            _dbContext = dbContext;
-            _wepHost = WepHost;
-            _logger = logger;
-            CategoryRepository = new CategoryRepository(_dbContext);
-            AuthorRepository = new AuthorRepository(_dbContext);
-            BookRepository = new BookRepository(_dbContext, WepHost);
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            CategoryRepository = categoryRepository ?? throw new ArgumentNullException(nameof(categoryRepository));
+            AuthorRepository = authorRepository ?? throw new ArgumentNullException(nameof(authorRepository));
+            BookRepository = bookRepository ?? throw new ArgumentNullException(nameof(bookRepository));
         }
         public int Save()
         {

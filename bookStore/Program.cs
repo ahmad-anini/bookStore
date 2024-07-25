@@ -1,5 +1,7 @@
 using bookStore.Data;
-using bookStore.Services;
+using bookStore.Repositories;
+using bookStore.Repositories.Implementaion;
+using bookStore.Services.UnitOfWorkService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,7 +25,14 @@ namespace bookStore
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+            builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
+            builder.Services.AddScoped<IBookRepository, BookRepository>();
+
+
 
 
             var app = builder.Build();

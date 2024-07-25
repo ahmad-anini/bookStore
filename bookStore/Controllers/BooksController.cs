@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using bookStore.Data;
 using bookStore.Models;
-using bookStore.Services;
+using bookStore.Services.UnitOfWorkService;
 using bookStore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -16,7 +16,11 @@ namespace bookStore.Controllers
         private readonly IMapper mapper;
         private readonly ILogger logger;
 
-        public BooksController(ApplicationDbContext context, IWebHostEnvironment WepHost, IUnitOfWork unitOfWork, IMapper mapper, ILogger logger)
+        public BooksController(ApplicationDbContext context,
+                IWebHostEnvironment WepHost,
+                IUnitOfWork unitOfWork,
+                IMapper mapper,
+                ILogger<BooksController> logger)
         {
             this.context = context;
             this.WepHost = WepHost;

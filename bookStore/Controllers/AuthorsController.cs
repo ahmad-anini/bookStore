@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using bookStore.Models;
-using bookStore.Services;
+using bookStore.Services.UnitOfWorkService;
 using bookStore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
