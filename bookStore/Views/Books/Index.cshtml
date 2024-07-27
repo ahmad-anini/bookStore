@@ -8,9 +8,12 @@ All Books
 }
 
 @section Buttons {
-    <a asp-controller="Books" asp-action="Create" class="btn btn-primary">
-        Create
-    </a>
+    @if(User.Identity.IsAuthenticated)
+    {
+        <a asp-controller="Books" asp-action="Create" class="btn btn-primary">
+            Create
+        </a>
+    }
 }
 
 @if (!Model.Any())
@@ -36,7 +39,11 @@ else
                     <th>Categories</th>
                     <th>Publisher</th>
                     <th>Book Image</th>
-                    <th>Action</th>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <th>Action</th>
+                    }
+                    
                 </tr>
             </thead>
             <tbody>
@@ -52,13 +59,16 @@ else
 
 
                         <td> <img src="~/image/Books/@book.imageURL" width="50px" /></td>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <td>
+                                <div class="d-flex">
+                                    <a asp-controller="Books" asp-action="Delete" asp-route-id="@book.Id" class="btn btn-danger">Delete</a>
+                                </div>
+                            </td>
+                        }
 
-                        <td>
-                            <div class="d-flex">
-                                <a asp-controller="Books" asp-action="Delete" asp-route-id="@book.Id" class="btn btn-danger">Delete</a>
-                            </div>
-
-                        </td>
+ 
                     </tr>
                 }
             </tbody>

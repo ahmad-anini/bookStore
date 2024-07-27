@@ -1,10 +1,12 @@
 ﻿using bookStore.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace bookStore.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class RolesController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -20,7 +22,7 @@ namespace bookStore.Controllers
             var roleVm = roles.Select(role => new RoleVM
             {
                 Id = role.Id,
-                Name = role.Name
+                Name = role.Name ?? string.Empty
             }).ToList();
             return View(roleVm);
         }

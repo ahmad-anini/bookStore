@@ -1,0 +1,69 @@
+﻿@using bookStore.ViewModels
+@model List<ApplicationUserVM>
+@section Title {
+Users
+}
+@section SubTitle {
+All Users
+}
+@section Buttons {
+    <a asp-controller="Users" asp-action="Create" class="btn btn-primary">
+        Create
+    </a>
+}
+
+@if (!Model.Any())
+{
+    <div class="card-body">
+        <div class="alert alert-warning alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <h5><i class="icon fas fa-exclamation-triangle"></i> Alert!</h5>
+            No Data Found .
+        </div>
+    </div>
+}
+else
+{
+    <div class="card-body">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>User Name</th>
+                    <th>Email</th>
+                    <th>Phone Number</th>
+                    <th>Address</th>
+                    <th>Roles</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in @Model)
+                {
+                    <tr>
+                        <td>@item.UserName</td>
+                        <td>@item.Email</td>
+                        <td>@item.PhoneNumber</td>
+                        <td>@item.Address</td>
+                        <td>@String.Join(", ",item.Roles)</td>
+
+
+@*                         <td>
+                            <div class="d-flex">
+                                <a asp-controller="Authors" asp-action="Detales" asp-route-id="@item.Id" class="mr-2 btn btn-primary">
+                                    Details
+                                </a>
+                                <a asp-controller="Authors" asp-action="Edit" asp-route-id="@item.Id" class="mr-2 btn btn-primary">
+                                    edit
+                                </a>
+                                <a asp-controller="Authors" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+                            </div>
+
+                        </td> *@
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+

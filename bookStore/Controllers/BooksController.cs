@@ -2,11 +2,13 @@
 using bookStore.Models;
 using bookStore.Services.UnitOfWorkService;
 using bookStore.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace bookStore.Controllers
 {
+    [Authorize]
     public class BooksController : Controller
     {
         private readonly IUnitOfWork unitOfWork;

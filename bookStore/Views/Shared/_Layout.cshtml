@@ -172,7 +172,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <img src="~/Dashboard/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
                     </div>
                     <div class="info">
-                        <a href="#" class="d-block">Alexander Pierce</a>
+                        <a href="#" class="d-block">@User.Identity.Name</a>
                     </div>
                 </div>
 
@@ -193,20 +193,31 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                         <!-- Add icons to the links using the .nav-icon class
                              with font-awesome or any other icon font library -->
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a asp-controller="Roles" asp-action="Index" class="nav-link">
+                                    <i class="nav-icon fas fa-th"></i>
+                                    <p>
+                                        Roles
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-controller="Users" asp-action="Index" class="nav-link">
+                                    <i class="nav-icon fas fa-th"></i>
+                                    <p>
+                                        Users
+                                    </p>
+                                </a>
+                            </li>
+                        }
 
-                        <li class="nav-item">
-                            <a asp-controller="Roles" asp-action="Index" class="nav-link">
-                                <i class="nav-icon fas fa-th"></i>
-                                <p>
-                                    Roles
-                                </p>
-                            </a>
-                        </li>
                         <li class="nav-item">
                             <a asp-controller="Categories" asp-action="Index" class="nav-link">
                                 <i class="nav-icon fas fa-th"></i>
                                 <p>
-                                    Categories 
+                                    Categories
                                 </p>
                             </a>
                         </li>
@@ -226,7 +237,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                 </p>
                             </a>
                         </li>
-  
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+                                    <button type="submit" class="btn nav-link">Logout</button>
+                                </form>
+                            </li>
+                        }
+
                     </ul>
                 </nav>
                 <!-- /.sidebar-menu -->
@@ -258,16 +277,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col">
-                        <div class="card">
-                            <div class="card-header d-flex">
+                            <div class="card">
+                                <div class="card-header d-flex">
                                     <h5 class="m-0 flex-grow-1">@RenderSection("SubTitle", false)</h5>
-                                @RenderSection("Buttons" , false)
-                            </div>        
+                                    @RenderSection("Buttons", false)
+                                </div>
                                 @RenderBody()
-                        </div>
+                            </div>
                         </div>
                     </div>
-                   
+
                 </div><!-- /.container-fluid -->
             </div>
             <!-- /.content -->
