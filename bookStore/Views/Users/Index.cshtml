@@ -8,6 +8,7 @@ All Users
 }
 @section Buttons {
     <a asp-controller="Users" asp-action="Create" class="btn btn-primary">
+        <i class="fas fa-plus-square"></i>
         Create
     </a>
 }
@@ -33,6 +34,8 @@ else
                     <th>Phone Number</th>
                     <th>Address</th>
                     <th>Roles</th>
+                    <th>Actions</th>
+                    
                     
                 </tr>
             </thead>
@@ -45,25 +48,25 @@ else
                         <td>@item.PhoneNumber</td>
                         <td>@item.Address</td>
                         <td>@String.Join(", ",item.Roles)</td>
-
-
-@*                         <td>
-                            <div class="d-flex">
-                                <a asp-controller="Authors" asp-action="Detales" asp-route-id="@item.Id" class="mr-2 btn btn-primary">
-                                    Details
-                                </a>
-                                <a asp-controller="Authors" asp-action="Edit" asp-route-id="@item.Id" class="mr-2 btn btn-primary">
-                                    edit
-                                </a>
-                                <a asp-controller="Authors" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+                        <td>
+                            <div class="d-flex justify-content-center">
+                                <a  data-id="@item.Id" class="btn btn-danger js-delete">Delete</a>
                             </div>
 
-                        </td> *@
+                        </td>
                     </tr>
                 }
             </tbody>
         </table>
     </div>
+}
+
+
+@section Scripts {
+    <script type="module">
+        import { handleDelete } from '/js/handleAlerts.js';
+        handleDelete("Users");
+    </script>
 }
 
 

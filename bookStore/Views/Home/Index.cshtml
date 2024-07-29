@@ -1,11 +1,38 @@
-﻿@{
+﻿@using bookStore.ViewModels
+@model List<BookVM>
+@{
     ViewData["Title"] = "Home Page";
 }
-@section Title{
-Home
+@section Title {
+Book Store
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container">
+    <div class="row">
+        @foreach (var book in Model)
+        {
+            <div class="col-md-4 col-sm-6 mb-4">
+                <div class="card h-100">
+                    <img src="~/image/Books/@book.imageURL" class="card-img-top" alt="@book.Title" style="height: 200px; object-fit: cover;">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">@book.Title</h5>
+                        <p class="card-text flex-grow-1">@book.Description</p>
+                        <a href="#" class="btn btn-primary mt-auto">Buy</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 </div>
+
+<style>
+    .card-img-top {
+        width: 100%;
+        height: auto;
+    }
+
+    .card-body {
+        display: flex;
+        flex-direction: column;
+    }
+</style>

@@ -5,11 +5,12 @@
 Authors
 }
 @section SubTitle {
-Create
+Edit
 }
 
-<form asp-controller="Authors" method="post">
+<form asp-controller="Authors" asp-action="Edit" method="post">
     <div class="card-body">
+        <input type="hidden" asp-for="Id" />
         <div class="form-group">
             <label asp-for="Name"></label>
             <input type="text" class="form-control" asp-for="Name" />
@@ -17,6 +18,14 @@ Create
         </div>
     </div>
     <div class="card-footer">
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary js-edit">Submit</button>
     </div>
 </form>
+
+
+@section Scripts {
+    <script type="module">
+        import {  handleUpdate } from '/js/handleAlerts.js';
+        handleUpdate("Authors");
+    </script>
+}

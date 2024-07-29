@@ -8,6 +8,7 @@ All Categories
 }
 @section Buttons {
     <a asp-controller="Categories" asp-action="Create" class="btn btn-primary">
+        <i class="fas fa-plus-square"></i>
         Create
     </a>
 }
@@ -41,14 +42,19 @@ else
                         <td>@item.Name</td>
 
                         <td>
-                            <div class="d-flex">
+                            <div class="d-flex justify-content-center">
                                 <a asp-controller="Categories" asp-action="Details" asp-route-id="@item.Id" class="mr-2 btn btn-primary">
+                                    <i class="fas fa-info"></i>
                                     Details
                                 </a>
-                                <a asp-controller="Categories" asp-action="Edit" asp-route-id="@item.Id" class="mr-2 btn btn-primary">
+                                <a asp-controller="Categories" asp-action="Edit" asp-route-id="@item.Id" class="mr-2 btn btn-info">
+                                    <i class="fas fa-edit"></i>
                                      edit
                                 </a>
-                                <a asp-controller="Categories" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+                                <a data-id="@item.Id" class="btn btn-danger js-delete">
+                                    <i class="fas fa-trash"></i>
+                                    Delete
+                                </a>
                             </div>
                     
                         </td>
@@ -57,6 +63,14 @@ else
             </tbody>
         </table>
     </div>
+}
+
+
+@section Scripts {
+    <script type="module">
+        import { handleDelete } from '/js/handleAlerts.js';
+        handleDelete("Categories");
+    </script>
 }
 
 

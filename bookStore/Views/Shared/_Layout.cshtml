@@ -15,6 +15,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" href="~/Dashboard/plugins/fontawesome-free/css/all.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="~/Dashboard/dist/css/adminlte.min.css">
+
+    <link rel="stylesheet" href="~/Dashboard/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+
+    <style>
+        .table td, .table th {
+            text-align: center;
+            vertical-align: middle;
+        }
+    </style>
 </head>
 <body class="hold-transition sidebar-mini">
     <div class="wrapper">
@@ -27,7 +36,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a href="index3.html" class="nav-link">Home</a>
+                    <a asp-controller="Home" asp-action="Index" class="nav-link">Home</a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
                     <a href="#" class="nav-link">Contact</a>
@@ -167,14 +176,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <!-- Sidebar -->
             <div class="sidebar">
                 <!-- Sidebar user panel (optional) -->
-                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-                    <div class="image">
-                        <img src="~/Dashboard/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                        <div class="image">
+                            <img src="~/Dashboard/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+                        </div>
+                        <div class="info">
+                            <a href="#" class="d-block">@User.Identity.Name</a>
+                        </div>
                     </div>
-                    <div class="info">
-                        <a href="#" class="d-block">@User.Identity.Name</a>
-                    </div>
-                </div>
+                }
+
 
                 <!-- SidebarSearch Form -->
                 <div class="form-inline">
@@ -241,7 +254,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         {
                             <li class="nav-item">
                                 <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
-                                    <button type="submit" class="btn nav-link">Logout</button>
+                                    <button type="submit" class="btn nav-link"><i class="fas fa-sign-out-alt"></i>Logout</button>
+                                    
                                 </form>
                             </li>
                         }
@@ -319,6 +333,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="~/Dashboard/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- AdminLTE App -->
     <script src="~/Dashboard/dist/js/adminlte.min.js"></script>
+
+    <script src="~/Dashboard/plugins/sweetalert2/sweetalert2.min.js"></script>
+
+    @RenderSection("Scripts",false)
 
 </body>
 </html>

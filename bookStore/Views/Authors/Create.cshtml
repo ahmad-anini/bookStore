@@ -1,16 +1,15 @@
 ﻿@using bookStore.ViewModels
-@model CategoryVM
+@model AuthorFormVM
 
 @section Title {
-Categories
+Authors
 }
 @section SubTitle {
 Create
 }
 
-<form asp-controller="Categories" asp-action="Create"  method="post">
+<form asp-controller="Authors" asp-action="Create" method="post">
     <div class="card-body">
-
         <div class="form-group">
             <label asp-for="Name"></label>
             <input type="text" class="form-control" asp-for="Name" />
@@ -22,11 +21,10 @@ Create
     </div>
 </form>
 
+
 @section Scripts {
     <script type="module">
         import { handleCreate } from '/js/handleAlerts.js';
-        handleCreate("Categories");
+        handleCreate("Authors");
     </script>
 }
-
-
