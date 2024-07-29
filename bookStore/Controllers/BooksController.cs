@@ -11,24 +11,24 @@ namespace bookStore.Controllers
     [Authorize]
     public class BooksController : Controller
     {
-        private readonly IUnitOfWork unitOfWork;
-        private readonly IMapper mapper;
-        private readonly ILogger logger;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+        private readonly ILogger _logger;
 
         public BooksController(IUnitOfWork unitOfWork,
                 IMapper mapper,
                 ILogger<BooksController> logger)
         {
-            this.unitOfWork = unitOfWork;
-            this.mapper = mapper;
-            this.logger = logger;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+            _logger = logger;
         }
 
         public IActionResult Index()
         {
-            var books = unitOfWork.BookRepository.GetAll();
+            var books = _unitOfWork.BookRepository.GetAll();
 
-            var bookvm = mapper.Map<List<BookVM>>(books);
+            var bookvm = _mapper.Map<List<BookVM>>(books);
 
             return View(bookvm);
         }
@@ -36,13 +36,13 @@ namespace bookStore.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            var authors = unitOfWork.AuthorRepository.GetAll();
+            var authors = _unitOfWork.AuthorRepository.GetAll();
 
-            var authorList = mapper.Map<List<SelectListItem>>(authors);
+            var authorList = _mapper.Map<List<SelectListItem>>(authors);
 
-            var categories = unitOfWork.CategoryRepository.GetAll();
+            var categories = _unitOfWork.CategoryRepository.GetAll();
 
-            var categoryList = mapper.Map<List<SelectListItem>>(categories);
+            var categoryList = _mapper.Map<List<SelectListItem>>(categories);
 
             var viewModel = new BookFormVM
             {
@@ -60,28 +60,26 @@ namespace bookStore.Controllers
             try
             {
                 var imageName = viewModel.ImageUrl != null ?
-                unitOfWork.BookRepository.AddBookImage(viewModel.ImageUrl) : string.Empty;
+                _unitOfWork.BookRepository.AddBookImage(viewModel.ImageUrl) : string.Empty;
 
-                var book = mapper.Map<Book>(viewModel);
+                var book = _mapper.Map<Book>(viewModel);
                 book.ImageUrl = imageName;
 
-                unitOfWork.BookRepository.CreateBook(book);
-                unitOfWork.Save();
+                _unitOfWork.BookRepository.CreateBook(book);
+                _unitOfWork.Save();
+                return Ok();
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message);
+                _logger.LogError(ex.Message);
                 return StatusCode(500, "An error occurred while processing your request.");
             }
 
-
-
-            return RedirectToAction("Index");
         }
 
         public ActionResult Delete(int id)
         {
-            var book = unitOfWork.BookRepository.GetById(id);
+            var book = _unitOfWork.BookRepository.GetById(id);
             if (book == null)
             {
                 return NotFound();
@@ -91,20 +89,20 @@ namespace bookStore.Controllers
             {
                 if (book.ImageUrl != null)
                 {
-                    unitOfWork.BookRepository.DeleteBookImage(book.ImageUrl);
+                    _unitOfWork.BookRepository.DeleteBookImage(book.ImageUrl);
                 }
 
-                unitOfWork.BookRepository.DeleteBook(book);
-                unitOfWork.Save();
+                _unitOfWork.BookRepository.DeleteBook(book);
+                _unitOfWork.Save();
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message);
+                _logger.LogError(ex.Message);
                 return StatusCode(500, "An error occurred while processing your request.");
             }
 
 
-            return RedirectToAction("Index");
+            return Ok();
         }
     }
 }

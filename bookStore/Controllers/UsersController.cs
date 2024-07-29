@@ -28,7 +28,9 @@ namespace bookStore.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var users = await _userManager.Users.ToListAsync();
+            var users = await _userManager.Users
+                .Where(user => user.IsDeleted == false)
+                .ToListAsync();
 
             var viewModelList = _mapper.Map<List<ApplicationUserVM>>(users);
 
@@ -76,6 +78,24 @@ namespace bookStore.Controllers
             await _userManager.AddToRolesAsync(user, viewModel.SelectedRoles);
 
             return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> Delete(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            user.IsDeleted = true;
+
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
+            return Ok();
         }
 
     }

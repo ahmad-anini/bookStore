@@ -8,31 +8,31 @@ namespace bookStore.Controllers
 {
     public class CategoriesController : Controller
     {
-        private readonly IUnitOfWork unitOfWork;
-        private readonly IMapper mapper;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
         public CategoriesController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            this.unitOfWork = unitOfWork;
-            this.mapper = mapper;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
         public IActionResult Index()
         {
-            var categories = unitOfWork.CategoryRepository.GetAll();
+            var categories = _unitOfWork.CategoryRepository.GetAll();
 
-            var categoryVM = mapper.Map<List<CategoryVM>>(categories);
+            var categoryVM = _mapper.Map<List<CategoryVM>>(categories);
 
             return View(categoryVM);
         }
 
         public IActionResult Details(int id)
         {
-            var category = unitOfWork.CategoryRepository.GetById(id);
+            var category = _unitOfWork.CategoryRepository.GetById(id);
             if (category is null)
             {
                 return NotFound();
             }
-            var viewModle = mapper.Map<CategoryVM>(category);
+            var viewModle = _mapper.Map<CategoryVM>(category);
 
             return View(viewModle);
 
@@ -48,12 +48,12 @@ namespace bookStore.Controllers
             {
                 return View("Create", categoryVM);
             }
-            var category = mapper.Map<Category>(categoryVM);
+            var category = _mapper.Map<Category>(categoryVM);
             try
             {
-                unitOfWork.CategoryRepository.CreateCategory(category);
-                unitOfWork.Save();
-                return RedirectToAction("Index");
+                _unitOfWork.CategoryRepository.CreateCategory(category);
+                _unitOfWork.Save();
+                return Ok();
             }
             catch
             {
@@ -64,33 +64,37 @@ namespace bookStore.Controllers
         }
 
         [HttpGet]
-        public IActionResult Edit(int id) => View("Create");
+        public IActionResult Edit(int id) => View("Edit");
 
         [HttpPost]
         public IActionResult Edit(CategoryVM categoryVM)
         {
-            var category = unitOfWork.CategoryRepository.GetById(categoryVM.Id);
+            var category = _unitOfWork.CategoryRepository.GetById(categoryVM.Id);
             if (category is null)
             {
                 return NotFound();
             }
 
             category.Name = categoryVM.Name;
-            unitOfWork.Save();
-            return RedirectToAction("Index");
+            if (!ModelState.IsValid)
+            {
+                return View("Edit", categoryVM);
+            }
+            _unitOfWork.Save();
+            return Ok();
         }
 
         public IActionResult Delete(int id)
         {
-            var category = unitOfWork.CategoryRepository.GetById(id);
+            var category = _unitOfWork.CategoryRepository.GetById(id);
             if (category is null)
             {
                 return NotFound();
             }
 
-            unitOfWork.CategoryRepository.DeleteCategory(category);
-            unitOfWork.Save();
-            return RedirectToAction("Index");
+            _unitOfWork.CategoryRepository.DeleteCategory(category);
+            _unitOfWork.Save();
+            return Ok();
         }
     }
 }

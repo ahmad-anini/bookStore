@@ -9,38 +9,38 @@ namespace bookStore.Controllers
     public class AuthorsController : Controller
     {
 
-        private readonly IUnitOfWork unitOfWork;
-        private readonly IMapper mapper;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
         public AuthorsController(IUnitOfWork unitOfWork, IMapper mapper)
         {
 
-            this.unitOfWork = unitOfWork;
-            this.mapper = mapper;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public IActionResult Index()
         {
-            var authors = unitOfWork.AuthorRepository.GetAll();
-            var authorsVM = mapper.Map<List<AuthorVM>>(authors);
+            var authors = _unitOfWork.AuthorRepository.GetAll();
+            var authorsVM = _mapper.Map<List<AuthorVM>>(authors);
             return View(authorsVM);
         }
 
         public IActionResult Detales(int id)
         {
-            var author = unitOfWork.AuthorRepository.GetById(id);
+            var author = _unitOfWork.AuthorRepository.GetById(id);
             if (author is null)
             {
                 return NotFound();
             }
-            var viewModle = mapper.Map<AuthorVM>(author);
+            var viewModle = _mapper.Map<AuthorVM>(author);
 
             return View(viewModle);
 
         }
 
         [HttpGet]
-        public IActionResult Create() => View("Form");
+        public IActionResult Create() => View("Create");
 
         [HttpPost]
         public IActionResult Create(AuthorFormVM authorVM)
@@ -49,9 +49,9 @@ namespace bookStore.Controllers
             {
                 return View("Form", authorVM);
             }
-            var author = mapper.Map<Author>(authorVM);
-            unitOfWork.AuthorRepository.CreateAuthor(author);
-            unitOfWork.Save();
+            var author = _mapper.Map<Author>(authorVM);
+            _unitOfWork.AuthorRepository.CreateAuthor(author);
+            _unitOfWork.Save();
             return RedirectToAction("Index");
 
         }
@@ -59,41 +59,41 @@ namespace bookStore.Controllers
         [HttpGet]
         public IActionResult Edit(int id)
         {
-            var author = unitOfWork.AuthorRepository.GetById(id);
+            var author = _unitOfWork.AuthorRepository.GetById(id);
             if (author is null)
             {
                 return NotFound();
             }
 
-            var authorVM = mapper.Map<AuthorFormVM>(author);
-            return View("Form", authorVM);
+            var authorVM = _mapper.Map<AuthorFormVM>(author);
+            return View("Edit", authorVM);
         }
 
         [HttpPost]
         public IActionResult Edit(AuthorFormVM authorVM)
         {
-            var author = unitOfWork.AuthorRepository.GetById(authorVM.Id);
+            var author = _unitOfWork.AuthorRepository.GetById(authorVM.Id);
             if (author is null)
             {
                 return NotFound();
             }
 
             author.Name = authorVM.Name;
-            unitOfWork.Save();
+            _unitOfWork.Save();
             return RedirectToAction("Index");
         }
 
         public IActionResult Delete(int id)
         {
-            var author = unitOfWork.AuthorRepository.GetById(id);
+            var author = _unitOfWork.AuthorRepository.GetById(id);
             if (author is null)
             {
                 return NotFound();
             }
 
-            unitOfWork.AuthorRepository.DeleteAuthor(author);
-            unitOfWork.Save();
-            return RedirectToAction("Index");
+            _unitOfWork.AuthorRepository.DeleteAuthor(author);
+            _unitOfWork.Save();
+            return Ok();
         }
     }
 }
